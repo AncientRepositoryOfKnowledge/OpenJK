@@ -5590,12 +5590,14 @@ void ClientThink( int clientNum, usercmd_t *ucmd ) {
 				&& controlled->NPC->controlledTime
 				&& ent->client->ps.forcePowerLevel[FP_TELEPATHY] > FORCE_LEVEL_3 )
 			{//An NPC I'm controlling with mind trick
-				if ( controlled->NPC->controlledTime < level.time )
+				//Disable time limit.
+				if (0) //controlled->NPC->controlledTime < level.time )
 				{//time's up!
 					G_ClearViewEntity( ent );
 					freed = qtrue;
 				}
-				else if ( ucmd->upmove > 0 )
+				//Fixed: Press the "Use" button to exit.
+				else if ( ucmd->buttons == 32 )
 				{//jumping gets you out of it FIXME: check some other button instead... like ESCAPE... so you could even have total control over an NPC?
 					G_ClearViewEntity( ent );
 					ucmd->upmove = 0;//ucmd->buttons = 0;

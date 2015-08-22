@@ -10395,7 +10395,8 @@ void ForceTelepathy( gentity_t *self )
 			//FIXME: do the visual sparkles effect on their heads, still?
 			WP_ForcePowerStart( self, FP_TELEPATHY, 0 );
 		}
-		else if ( traceEnt->client->playerTeam != self->client->playerTeam )
+		//Fixed: Can now control anyone, not just enemies.
+		else if (1) //traceEnt->client->playerTeam != self->client->playerTeam )
 		{//an enemy
 			int override = 0;
 			if ( (traceEnt->NPC->scriptFlags&SCF_NO_MIND_TRICK) )

@@ -1,0 +1,80 @@
+*************************************
+To remove the MindTrick jump exit:
+*************************************
+File: 		g_active.cpp
+Function: 	ClientThink
+*************************************
+change:
+	else if (ucmd->upmove > 0)
+to:
+	else if (ucmd->buttons == 32)
+
+Because 32 is the use button.
+
+
+*************************************
+To change the camera exit conditions:
+*************************************
+File:		g_misc.cpp
+Function:	camera_aim( gentity_t *self )
+*************************************
+Change:
+	Comment out the "|| player->client->usercmd.upmove )" section.
+
+
+
+*************************************
+Jedi Mind Trick is called "ForceTelepathy"
+*************************************
+File:		wp_saber.cpp
+Function:	ForceTelepathy(gentity_t *)
+*************************************
+To control allies:
+Comment out:
+			else if ( traceEnt->client->playerTeam != self->client->playerTeam )
+And change to:
+			else if (1)
+
+
+*************************************
+To control the consumption of force energy:
+*************************************
+File: 		wp_saber.cpp
+Function: 	WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int overrideAmt )
+*************************************
+Add in:
+	|| !self->NPC
+To:
+	if ( self->NPC )
+
+
+
+*************************************
+To enable continuous strafe jumping:
+*************************************
+File:		bg_pmove.cpp
+Function:	PM_GetLandingAnim(void)
+*************************************
+Comment out:
+		pm->ps->velocity[0] *= 0.5f;
+		pm->ps->velocity[1] *= 0.5f;
+
+
+*************************************
+Strafe Jumping Code:
+*************************************
+File:		bg_pmove.cpp
+Function:	PM_Accelerate(vec3_t, float, float)
+*************************************
+For reference.
+
+
+
+
+*************************************
+Print to Screen:
+*************************************
+File:		
+Function:	
+*************************************
+CG_CenterPrint()
