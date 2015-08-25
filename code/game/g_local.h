@@ -67,6 +67,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #define FL_DROPPED_ITEM			0x00001000
 #define	FL_DONT_SHOOT			0x00002000	// Can target him, but not shoot him
 #define	FL_UNDYING				0x00004000	// Takes damage down to 1 point, but does not die
+#define FL_LORDMODE				0x00008000	// Player has unlimited force energy.
 //#define FL_OVERCHARGED			0x00008000	// weapon shot is an overcharged version....probably a lame place to be putting this flag...
 #define FL_LOCK_PLAYER_WEAPONS	0x00010000	// player can't switch weapons... ask james if there's a better spot for this
 #define FL_DISINTEGRATED		0x00020000	// marks that the corpse has already been disintegrated
@@ -75,6 +76,9 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #define FL_OVERCHARGED_HEALTH	0x00100000	// Reduce health back to max
 #define FL_NO_ANGLES			0x00200000	// No bone angle overrides, no pitch or roll in full angles
 #define FL_RED_CROSSHAIR		0x00400000	// Crosshair red on me
+
+#define FL_RAPIDFIRE			0x00800000	// Rapid fire.
+#define FL_INFINITEAMMO			0x01000000	// Infinite ammo.
 
 
 //Pointer safety utilities

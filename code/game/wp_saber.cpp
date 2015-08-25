@@ -10000,7 +10000,8 @@ void ForceThrow( gentity_t *self, qboolean pull, qboolean fake )
 	}
 	if ( pull )
 	{
-		if ( self->NPC )
+		//If the player has lordmode enabled, they too can push more often.
+		if ( self->NPC || self->flags&FL_LORDMODE )
 		{//NPCs can push more often
 			//FIXME: vary by rank and game skill?
 			self->client->ps.forcePowerDebounce[FP_PULL] = level.time + 200;
@@ -10012,7 +10013,8 @@ void ForceThrow( gentity_t *self, qboolean pull, qboolean fake )
 	}
 	else
 	{
-		if ( self->NPC )
+		//If the player has lordmode enabled, they too can push more often.
+		if (self->NPC || self->flags&FL_LORDMODE)
 		{//NPCs can push more often
 			//FIXME: vary by rank and game skill?
 			self->client->ps.forcePowerDebounce[FP_PUSH] = level.time + 200;
@@ -10354,36 +10356,45 @@ void ForceTelepathy( gentity_t *self )
 		return;
 	}
 
-	if ( traceEnt && traceEnt->client  )
+	if ( traceEnt && traceEnt->client )
 	{
-		switch ( traceEnt->client->NPC_class )
+		//If the player is not in lordmode, perform these checks.
+		//They cannot grip everything.
+		if (!(self->flags&FL_LORDMODE))
 		{
-		case CLASS_GALAKMECH://cant grip him, he's in armor
-		case CLASS_ATST://much too big to grip!
-		//no droids either
-		case CLASS_PROBE:
-		case CLASS_GONK:
-		case CLASS_R2D2:
-		case CLASS_R5D2:
-		case CLASS_MARK1:
-		case CLASS_MARK2:
-		case CLASS_MOUSE:
-		case CLASS_SEEKER:
-		case CLASS_REMOTE:
-		case CLASS_PROTOCOL:
-		case CLASS_ASSASSIN_DROID:
-		case CLASS_SABER_DROID:
-		case CLASS_BOBAFETT:
-			break;
-		case CLASS_RANCOR:
-			if ( !(traceEnt->spawnflags&1) )
+			switch (traceEnt->client->NPC_class)
 			{
+			case CLASS_GALAKMECH://cant grip him, he's in armor
+			case CLASS_ATST://much too big to grip!
+			//no droids either
+			case CLASS_PROBE:
+			case CLASS_GONK:
+			case CLASS_R2D2:
+			case CLASS_R5D2:
+			case CLASS_MARK1:
+			case CLASS_MARK2:
+			case CLASS_MOUSE:
+			case CLASS_SEEKER:
+			case CLASS_REMOTE:
+			case CLASS_PROTOCOL:
+			case CLASS_ASSASSIN_DROID:
+			case CLASS_SABER_DROID:
+			case CLASS_BOBAFETT:
+				break;
+			case CLASS_RANCOR:
+				if (!(traceEnt->spawnflags & 1))
+				{
+					targetLive = qtrue;
+				}
+				break;
+			default:
 				targetLive = qtrue;
+				break;
 			}
-			break;
-		default:
+		}
+		else
+		{
 			targetLive = qtrue;
-			break;
 		}
 	}
 	if ( targetLive
@@ -12415,6 +12426,7 @@ int WP_GetVelocityForForceJump( gentity_t *self, vec3_t jumpVel, usercmd_t *ucmd
 
 void ForceJump( gentity_t *self, usercmd_t *ucmd )
 {
+	CG_CenterPrint("JUMP!", SCREEN_HEIGHT*0.95);
 	if ( self->client->ps.forcePowerDuration[FP_LEVITATION] > level.time )
 	{
 		return;
@@ -12637,10 +12649,13 @@ void WP_ForcePowerRegenerate( gentity_t *self, int overrideAmt )
 
 void WP_ForcePowerDrain( gentity_t *self, forcePowers_t forcePower, int overrideAmt )
 {
-	if ( self->NPC )
-	{//For now, NPCs have infinite force power
+	//NPCs have infinite force energy.
+	//If the player has lordmode enabled, then they too have infinite force energy.
+	if ( self->NPC || self->flags&FL_LORDMODE )
+	{
 		return;
 	}
+
 	//take away the power
 	int	drain = overrideAmt;
 	if ( !drain )
@@ -12690,7 +12705,9 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 	case FP_PUSH:
 		break;
 	case FP_PULL:
-		self->client->ps.forcePowersActive |= ( 1 << forcePower );
+		//Removed the force pull delay - now like JK II.
+		//NPCs and lordmode can now use force pull faster.
+		//self->client->ps.forcePowersActive |= ( 1 << forcePower );
 		break;
 	case FP_TELEPATHY:
 		break;
@@ -13349,7 +13366,7 @@ static void WP_ForcePowerRun( gentity_t *self, forcePowers_t forcePower, usercmd
 	float				dist;
 	extern usercmd_t	ucmd;
 
-	switch( (int)forcePower )
+  	switch( (int)forcePower )
 	{
 	case FP_HEAL:
 		if ( self->client->ps.forceHealCount >= FP_MaxForceHeal(self) || self->health >= self->client->ps.stats[STAT_MAX_HEALTH] )
@@ -13428,6 +13445,7 @@ static void WP_ForcePowerRun( gentity_t *self, forcePowers_t forcePower, usercmd
 	case FP_LEVITATION:
 		if ( self->client->ps.groundEntityNum != ENTITYNUM_NONE && !self->client->ps.forceJumpZStart )
 		{//done with jump
+			//ForcePowerStop is just reponsible for allowing your force energy to recharge.
 			WP_ForcePowerStop( self, forcePower );
 		}
 		else

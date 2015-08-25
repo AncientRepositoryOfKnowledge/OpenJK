@@ -40,7 +40,7 @@ And change to:
 To control the consumption of force energy:
 *************************************
 File: 		wp_saber.cpp
-Function: 	WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int overrideAmt )
+Function: 	WP_ForcePowerDrain( gentity_t *self, forcePowers_t forcePower, int overrideAmt )
 *************************************
 Add in:
 	|| !self->NPC

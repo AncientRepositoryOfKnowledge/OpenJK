@@ -1247,7 +1247,7 @@ static qboolean PM_CheckJump( void )
    							pm->ps->forcePowersActive |= (1<<FP_LEVITATION);
 							if ( pm->gent )
 							{
-								G_SoundOnEnt( pm->gent, CHAN_BODY, "sound/weapons/force/jump.wav" );
+ 								G_SoundOnEnt( pm->gent, CHAN_BODY, "sound/weapons/force/jump.wav" );
 								// keep track of force jump stat
 								if(pm->ps->clientNum == 0 && pm->gent->client)
 								{
@@ -13891,7 +13891,9 @@ static void PM_Weapon( void )
 	pm->ps->weaponstate = WEAPON_FIRING;
 
 	// take an ammo away if not infinite
-	if ( pm->ps->ammo[ weaponData[pm->ps->weapon].ammoIndex ] != -1 )
+
+	//Infinite ammo code here.
+	if ( pm->ps->ammo[ weaponData[pm->ps->weapon].ammoIndex ] != -1 && (!(pm->gent->flags&FL_INFINITEAMMO)) )
 	{
 		// enough energy to fire this weapon?
 		if ((pm->ps->ammo[weaponData[pm->ps->weapon].ammoIndex] - amount) >= 0)
@@ -13995,7 +13997,7 @@ static void PM_Weapon( void )
 	{
 		if(pm->gent && pm->gent->NPC != NULL )
 		{//NPCs have their own refire logic
-			return;
+ 			return;
 		}
 	}
 
@@ -14018,7 +14020,10 @@ static void PM_Weapon( void )
 		}
 	}
 
-	pm->ps->weaponTime += addTime;
+	//Rapid fire code here.
+	bool RapidFireEnabled = pm->gent->flags&FL_RAPIDFIRE;
+	RapidFireEnabled ? (pm->ps->weaponTime += addTime / 3) : pm->ps->weaponTime += addTime;
+	//pm->ps->weaponTime += addTime;
 	pm->ps->lastShotTime = level.time;//so we know when the last time we fired our gun is
 
 	// HACK!!!!!

@@ -440,6 +440,88 @@ void Cmd_God_f (gentity_t *ent)
 
 /*
 ==================
+Cmd_lord_f
+
+Sends client to lordmode.
+No force consumption in this mode.
+
+argv(0) lord
+==================
+*/
+void Cmd_lord_f(gentity_t *ent)
+{
+	const char	*msg;
+
+	if (!CheatsOk(ent)) {
+		return;
+	}
+
+	ent->flags ^= FL_LORDMODE;
+	if (!(ent->flags & FL_LORDMODE))
+		msg = "lordmode OFF\n";
+	else
+		msg = "lordmode ON\n";
+
+	gi.SendServerCommand(ent - g_entities, "print \"%s\"", msg);
+}
+
+/*
+==================
+Cmd_rapidfire_f
+
+Sends client to rapidfire.
+Weapons fire at a much faster rate.
+
+argv(0) rapidfire
+==================
+*/
+void Cmd_rapidfire_f(gentity_t *ent)
+{
+	const char	*msg;
+
+	if (!CheatsOk(ent)) {
+		return;
+	}
+
+	ent->flags ^= FL_RAPIDFIRE;
+	if (!(ent->flags & FL_RAPIDFIRE))
+		msg = "rapidfire OFF\n";
+	else
+		msg = "rapidfire ON\n";
+		msg = "Warning: May cause instability!\n";
+
+	gi.SendServerCommand(ent - g_entities, "print \"%s\"", msg);
+}
+
+/*
+==================
+Cmd_infiniteammo_f
+
+Sends client to rapidfire.
+Weapons fire at a much faster rate.
+
+argv(0) infiniteammo
+==================
+*/
+void Cmd_infiniteammo_f(gentity_t *ent)
+{
+	const char	*msg;
+
+	if (!CheatsOk(ent)) {
+		return;
+	}
+
+	ent->flags ^= FL_INFINITEAMMO;
+	if (!(ent->flags & FL_INFINITEAMMO))
+		msg = "infiniteammo OFF\n";
+	else
+		msg = "infiniteammo ON\n";
+
+	gi.SendServerCommand(ent - g_entities, "print \"%s\"", msg);
+}
+
+/*
+==================
 Cmd_Undying_f
 
 Sets client to undead mode
@@ -1386,6 +1468,12 @@ void ClientCommand( int clientNum ) {
 		Cmd_Give_f (ent);
 	else if (Q_stricmp (cmd, "god") == 0)
 		Cmd_God_f (ent);
+	else if (Q_stricmp(cmd, "lord") == 0)
+		Cmd_lord_f(ent);
+	else if (Q_stricmp(cmd, "rapidfire") == 0)
+		Cmd_rapidfire_f(ent);
+	else if (Q_stricmp(cmd, "infiniteammo") == 0)
+		Cmd_infiniteammo_f(ent);
 	else if (Q_stricmp (cmd, "undying") == 0)
 		Cmd_Undying_f (ent);
 	else if (Q_stricmp (cmd, "notarget") == 0)
