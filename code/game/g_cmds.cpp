@@ -488,7 +488,6 @@ void Cmd_rapidfire_f(gentity_t *ent)
 		msg = "rapidfire OFF\n";
 	else
 		msg = "rapidfire ON\n";
-		msg = "Warning: May cause instability!\n";
 
 	gi.SendServerCommand(ent - g_entities, "print \"%s\"", msg);
 }
